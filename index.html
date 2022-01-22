@@ -10,11 +10,16 @@
     <h1>Adopt a pet!</h1>
     <div id="shelter" class="search">
         <h2>Look for a shelter</h2>
-        within <input class="input" id="distance" placeholder="enter an number"/> miles of my location. 
+        within <input class="input" id="distance" placeholder="enter an number"/> miles of my location.
         <input class="shelter" type="button" id="submitDistance" value="Search" />
     </div>
+
+    <div id="map" style="height: 600px; width: 1000px;"></div>
+
     <script src="script.js"></script>
-    
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0xg5A2VpM7DIfAQnH2-Qm-oYiJqRjLEE&libraries=places&callback=initGoogle">
+    </script>    
 </body>
 </html>
 
