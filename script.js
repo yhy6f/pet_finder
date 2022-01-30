@@ -1,52 +1,47 @@
-// curl -d "grant_type=client_credentials&client_id=CLIENT_ID&client_secret=CLIENT_SECRET" https://api.petfinder.com/v2/oauth2/token
-
-// {"token_type":"Bearer","expires_in":3600,"access_token":"AUTHORIZATION_TOKEN"}             
-// testing with curl
-// curl -H "Authorization: Bearer AUTHORIZATION_TOKEN" GET https://api.petfinder.com/v2/organizations?location=20740&distance=100
-
+const accessToken = "YOUR_TOKEN"
 const distanceInputButton = document.querySelector("#submitDistance");
 
 distanceInputButton.addEventListener("click", function() {
-  const distance = document.querySelector("input.input").value;
-  const shelterEndpoint = `https://accesscontrolalloworiginall.herokuapp.com/https://api.petfinder.com/v2/organizations?location=20740&distance=${distance}`;
+    const distance = document.querySelector("input.input").value;
 
-  fetch(shelterEndpoint, {
-    headers: {
-        Accept: 'application/json',
-        Authorization: "Bearer AUTHORIZATION_TOKEN",
+    if(navigator.geolocation) {
+
+        navigator.geolocation.getCurrentPosition((loc) => {
+            // console.log(loc);
+            location.lat = loc.coords.latitude;
+            location.lng = loc.coords.longitude;
+            const shelterEndpoint = `https://api.petfinder.com/v2/organizations?latitude=${location.lat}&longitude=${location.lng}&distance=${distance}`;
+            console.log(shelterEndpoint);
+            fetch(shelterEndpoint, {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            })
+                .then(resp => resp.json())
+                .then(data => {
+                    console.log(data);
+            
+                    data.organizations.forEach(function (org) {
+                        console.log(
+                        "org.address.address1: ",
+                        org.address.address1,
+                        "org.address.address2: ",
+                        org.address.address2,
+                        "org.address.city: ",
+                        org.address.city,
+                        "org.address.state: ",
+                        org.address.state,
+                        "org.address.postcode",
+                        org.address.postcode
+                        );
+                    });
+                })
+                .catch(err => console.log(err))
+            })
+    } else {
+            console.log('geolocation is not supported :(');
     }
-    })
-    .then(resp => resp.json())
-    .then(data => {
-        console.log(data);
-
-        data.organizations.forEach( function(org) {console.log(org.address.address1)});  
-        data.organizations.forEach( function(org) {console.log(org.address.address2)}); 
-        data.organizations.forEach( function(org) {console.log(org.address.city)});
-        data.organizations.forEach( function(org) {console.log(org.address.state)});
-        data.organizations.forEach( function(org) {console.log(org.address.postcode)});
-    })
-    .catch(err => console.log(err))
-
-//   if(navigator.geolocation) {
-
-//     navigator.geolocation.getCurrentPosition((loc) => {
-//         // console.log(loc);
-//         location.lat = loc.coords.latitude;
-//         location.lng = loc.coords.longitude;
-//         const shelterEndpoint = `https://api.petfinder.com/v2/organizations?latitude=${location.lat}&longitude=${location.lng}&distance=${distance}`;
-//         // console.log(shelterEndpoint);
-
-//     },
-//     (err) => {
-//         console.log("User clicked no LOL");
-//     }
-//     )
-
-//     } else {
-//         console.log('geolocation is not supported :(');
-//     }
-
 })
 
 function initGoogle() {
@@ -77,10 +72,3 @@ function initGoogle() {
         map = new google.maps.Map(document.getElementById("map"), options);
     }
 }
-
-
-
-
-
-
-
