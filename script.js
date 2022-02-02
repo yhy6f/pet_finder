@@ -1,8 +1,10 @@
-const accessToken = "YOUR_TOKEN"
+const accessToken = "TOKEN"
 const distanceInputButton = document.querySelector("#submitDistance");
+const distanceInput = document.querySelector("input.input");
+
+var geocoder;
 
 distanceInputButton.addEventListener("click", function() {
-    const distance = document.querySelector("input.input").value;
 
     if(navigator.geolocation) {
 
@@ -10,7 +12,9 @@ distanceInputButton.addEventListener("click", function() {
             // console.log(loc);
             location.lat = loc.coords.latitude;
             location.lng = loc.coords.longitude;
-            const shelterEndpoint = `https://api.petfinder.com/v2/organizations?latitude=${location.lat}&longitude=${location.lng}&distance=${distance}`;
+            let distance = distanceInput.value;
+            let shelterEndpoint = `https://api.petfinder.com/v2/organizations?location=${location.lat},${location.lng}&distance=${distance}`;
+
             console.log(shelterEndpoint);
             fetch(shelterEndpoint, {
                 headers: {
@@ -24,17 +28,22 @@ distanceInputButton.addEventListener("click", function() {
             
                     data.organizations.forEach(function (org) {
                         console.log(
-                        "org.address.address1: ",
-                        org.address.address1,
-                        "org.address.address2: ",
-                        org.address.address2,
-                        "org.address.city: ",
-                        org.address.city,
-                        "org.address.state: ",
-                        org.address.state,
                         "org.address.postcode",
-                        org.address.postcode
+                        org.address.postcode,
                         );
+
+                        google.maps.Geocoder.geocode( { 'address': org.address.postcode}, function(results, status) {
+                            if (status == 'OK') {
+                                console.log(results[0].geometry.location)
+                            //   map.setCenter(results[0].geometry.location);
+                            //   var marker = new google.maps.Marker({
+                            //       map: map,
+                            //       position: results[0].geometry.location
+                            //   });
+                            } else {
+                              alert('Geocode was not successful for the following reason: ' + status);
+                            }
+                          });
                     });
                 })
                 .catch(err => console.log(err))
