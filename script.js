@@ -39,13 +39,15 @@ distanceInputButton.addEventListener("click", function() {
                                 var marker = new google.maps.Marker({
                                     map: map,
                                     position: results[0].geometry.location,
-                                    optimized: false 
+                                    optimized: false,
                                     // if true it's static
+                                    animation: google.maps.Animation.DROP
                                 });
                                 marker.setLabel("label");
                                 marker.addListener("click", (googleMapsEvent) => {
                                     document.getElementById('info').innerHTML = `Name: ${org.name} Phone: ${org.phone} Website: ${org.website}`
                                 })
+
                                 // marker.setTitle("title"); not working
                             } else {
                               alert('Geocode was not successful for the following reason: ' + status);
