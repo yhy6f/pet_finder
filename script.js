@@ -1,11 +1,9 @@
-const accessToken = "TOKEN"
+const accessToken = "ACCESS_TOKEN";
 const distanceInputButton = document.querySelector("#submitDistance");
 const distanceInput = document.querySelector("input.input");
 
-var geocoder;
-
 distanceInputButton.addEventListener("click", function() {
-
+    
     if(navigator.geolocation) {
 
         navigator.geolocation.getCurrentPosition((loc) => {
@@ -24,22 +22,24 @@ distanceInputButton.addEventListener("click", function() {
             })
                 .then(resp => resp.json())
                 .then(data => {
-                    console.log(data);
-            
-                    data.organizations.forEach(function (org) {
+                    // console.log(data);
+                    const first10 = data.organizations.slice(0,10);
+                    first10.forEach(function (org) {
                         console.log(
                         "org.address.postcode",
                         org.address.postcode,
                         );
 
-                        google.maps.Geocoder.geocode( { 'address': org.address.postcode}, function(results, status) {
+                        geocoder.geocode( {'address':org.address.postcode}, function(results, status) {
                             if (status == 'OK') {
-                                console.log(results[0].geometry.location)
-                            //   map.setCenter(results[0].geometry.location);
-                            //   var marker = new google.maps.Marker({
-                            //       map: map,
-                            //       position: results[0].geometry.location
-                            //   });
+                                // console.log(results[0].geometry.location)
+                                map.setCenter(results[0].geometry.location);
+                                var marker = new google.maps.Marker({
+                                    map: map,
+                                    position: results[0].geometry.location,
+                                });
+                                marker.setLabel("label");
+                                // marker.setTitle("title"); not working
                             } else {
                               alert('Geocode was not successful for the following reason: ' + status);
                             }
@@ -69,6 +69,7 @@ function initGoogle() {
             location.lat = loc.coords.latitude;
             location.lng = loc.coords.longitude
             map = new google.maps.Map(document.getElementById("map"), options);
+            geocoder = new google.maps.Geocoder();
         },
         (err) => {
             console.log("User clicked no lol");
