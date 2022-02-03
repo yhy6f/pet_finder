@@ -22,12 +22,14 @@ distanceInputButton.addEventListener("click", function() {
             })
                 .then(resp => resp.json())
                 .then(data => {
-                    // console.log(data);
+                    console.log(data);
                     const first10 = data.organizations.slice(0,10);
                     first10.forEach(function (org) {
                         console.log(
-                        "org.address.postcode",
                         org.address.postcode,
+                        org.name,
+                        org.phone,
+                        org.website
                         );
 
                         geocoder.geocode( {'address':org.address.postcode}, function(results, status) {
@@ -37,8 +39,13 @@ distanceInputButton.addEventListener("click", function() {
                                 var marker = new google.maps.Marker({
                                     map: map,
                                     position: results[0].geometry.location,
+                                    optimized: false 
+                                    // if true it's static
                                 });
                                 marker.setLabel("label");
+                                marker.addListener("click", (googleMapsEvent) => {
+                                    document.getElementById('info').innerHTML = `Name: ${org.name} Phone: ${org.phone} Website: ${org.website}`
+                                })
                                 // marker.setTitle("title"); not working
                             } else {
                               alert('Geocode was not successful for the following reason: ' + status);

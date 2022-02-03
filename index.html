@@ -6,20 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello World!</title>
 </head>
+
+<style>
+
+    #container {
+       height:100vh;
+       display:flex;
+       justify-content: center;
+       align-items: center;
+       flex-direction: column;
+    }
+
+    #map {
+        height: 80vh;
+        width: 80vw;
+    }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+
+</style>
+
 <body>
     <h1>Adopt a pet!</h1>
     <div id="shelter" class="search">
-        <h2>Look for a shelter</h2>
-        within <input class="input" id="distance" placeholder="enter an number"/> miles of my location.
+        <h2>Look for a shelter</h2> within <input class="input" id="distance" placeholder="enter an number"/> miles of my location.
         <input class="shelter" type="button" id="submitDistance" value="Search" />
     </div>
-
-    <div id="map" style="height: 600px; width: 1000px;"></div>
-
+    
+    <div id="container">
+        <h3 id="info"></h3>
+        <div id="map"></div>
+    </div>
     <script src="script.js"></script>
     <script async
-        src="https://maps.googleapis.com/maps/api/js?key=API_KEY&callback=initGoogle">
-    </script>  
+        src="https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places&callback=initGoogle">
+    </script>
 </body>
 </html>
 
