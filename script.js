@@ -48,6 +48,22 @@ distanceInputButton.addEventListener("click", function() {
                                     document.getElementById('info').innerHTML = `Name: ${org.name} Phone: ${org.phone} Website: ${org.website}`
                                 })
 
+                                const infoWindowOptions = {
+                                    content: `Name: ${org.name},
+                                    Phone: ${org.phone},
+                                    Website: ${org.website}`,
+                                }
+
+                                const infoWindow = new google.maps.InfoWindow(infoWindowOptions);
+                                
+                                const infoWindowOpenOptions = {
+                                    map: map,
+                                    anchor: marker,
+                                    shouldFocus: true
+                                }
+                                
+                                infoWindow.open(infoWindowOpenOptions);
+
                                 // marker.setTitle("title"); not working
                             } else {
                               alert('Geocode was not successful for the following reason: ' + status);
@@ -79,6 +95,7 @@ function initGoogle() {
             location.lng = loc.coords.longitude
             map = new google.maps.Map(document.getElementById("map"), options);
             geocoder = new google.maps.Geocoder();
+
         },
         (err) => {
             console.log("User clicked no lol");
@@ -91,3 +108,11 @@ function initGoogle() {
         map = new google.maps.Map(document.getElementById("map"), options);
     }
 }
+
+// an info window is an object of the type infowindow
+
+ 
+// constructor of the info window takes an infowindowOptions object as argument
+
+
+
