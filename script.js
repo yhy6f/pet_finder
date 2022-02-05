@@ -14,6 +14,11 @@ distanceInputButton.addEventListener("click", function() {
             let shelterEndpoint = `https://api.petfinder.com/v2/organizations?location=${location.lat},${location.lng}&distance=${distance}`;
 
             console.log(shelterEndpoint);
+
+            infoWindow = new google.maps.InfoWindow({
+                maxWidth: 200
+            });
+
             fetch(shelterEndpoint, {
                 headers: {
                     Accept: "application/json",
@@ -22,15 +27,9 @@ distanceInputButton.addEventListener("click", function() {
             })
                 .then(resp => resp.json())
                 .then(data => {
-                    console.log(data);
+                    // console.log(data);
                     const first10 = data.organizations.slice(0,10);
                     first10.forEach(function (org) {
-                        console.log(
-                        org.address.postcode,
-                        org.name,
-                        org.phone,
-                        org.website
-                        );
 
                         geocoder.geocode( {'address':org.address.postcode}, function(results, status) {
                             if (status == 'OK') {
@@ -41,27 +40,26 @@ distanceInputButton.addEventListener("click", function() {
                                     position: results[0].geometry.location,
                                     optimized: false,
                                     // if true it's static
-                                    animation: google.maps.Animation.DROP
+                                    animation: google.maps.Animation.DROP 
+                                    // adds the animation effects when pins are dropped
                                 });
 
-                                marker.addListener("click", (googleMapsEvent) => {
-                                    document.getElementById('info').innerHTML = `Name: ${org.name} Phone: ${org.phone} Website: ${org.website}`;
+                                google.maps.event.addListener(marker, 'click', (function(marker) {
 
-                                    infoWindow.setContent(`
-                                    <h3>${org.name}</h3>
-                                    <img src=${org.photos[0].small}>
-                                    <p>Phone: ${org.phone}</p>
-                                    <p>Website: ${org.website}</p>
-                                    `)
-                                
-                                    const infoWindowOpenOptions = {
-                                        map: map,
-                                        anchor: marker,
-                                        shouldFocus: true
+                                    return function() {
+                                        infoWindow.setContent(`
+                                            <h3>${org.name}</h3>
+                                            <img src=${org.photos[0].small}>
+                                            <p>Phone: ${org.phone}</p>
+                                            <p>Website: ${org.website}</p>`)
+                                        infoWindow.open({
+                                            map: map,
+                                            anchor: marker,
+                                            shouldFocus: true
+                                        });
                                     }
-
-                                    infoWindow.open(infoWindowOpenOptions);
-                                })
+                              
+                                  })(marker));
 
                             } else {
                               alert('Geocode was not successful for the following reason: ' + status);
@@ -93,10 +91,6 @@ function initGoogle() {
             location.lng = loc.coords.longitude
             map = new google.maps.Map(document.getElementById("map"), options);
             geocoder = new google.maps.Geocoder();
-            infoWindowOptions = {
-                maxWidth: 200
-            }
-            infoWindow = new google.maps.InfoWindow(infoWindowOptions);
         },
         (err) => {
             console.log("User clicked no lol");
