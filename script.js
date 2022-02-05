@@ -43,28 +43,26 @@ distanceInputButton.addEventListener("click", function() {
                                     // if true it's static
                                     animation: google.maps.Animation.DROP
                                 });
-                                marker.setLabel("label");
+
                                 marker.addListener("click", (googleMapsEvent) => {
-                                    document.getElementById('info').innerHTML = `Name: ${org.name} Phone: ${org.phone} Website: ${org.website}`
+                                    document.getElementById('info').innerHTML = `Name: ${org.name} Phone: ${org.phone} Website: ${org.website}`;
+
+                                    infoWindow.setContent(`
+                                    <h3>${org.name}</h3>
+                                    <img src=${org.photos[0].small}>
+                                    <p>Phone: ${org.phone}</p>
+                                    <p>Website: ${org.website}</p>
+                                    `)
+                                
+                                    const infoWindowOpenOptions = {
+                                        map: map,
+                                        anchor: marker,
+                                        shouldFocus: true
+                                    }
+
+                                    infoWindow.open(infoWindowOpenOptions);
                                 })
 
-                                const infoWindowOptions = {
-                                    content: `Name: ${org.name},
-                                    Phone: ${org.phone},
-                                    Website: ${org.website}`,
-                                }
-
-                                const infoWindow = new google.maps.InfoWindow(infoWindowOptions);
-                                
-                                const infoWindowOpenOptions = {
-                                    map: map,
-                                    anchor: marker,
-                                    shouldFocus: true
-                                }
-                                
-                                infoWindow.open(infoWindowOpenOptions);
-
-                                // marker.setTitle("title"); not working
                             } else {
                               alert('Geocode was not successful for the following reason: ' + status);
                             }
@@ -95,7 +93,10 @@ function initGoogle() {
             location.lng = loc.coords.longitude
             map = new google.maps.Map(document.getElementById("map"), options);
             geocoder = new google.maps.Geocoder();
-
+            infoWindowOptions = {
+                maxWidth: 200
+            }
+            infoWindow = new google.maps.InfoWindow(infoWindowOptions);
         },
         (err) => {
             console.log("User clicked no lol");
