@@ -27,11 +27,13 @@ distanceInputButton.addEventListener("click", function() {
             })
                 .then(resp => resp.json())
                 .then(data => {
-                    // console.log(data);
+                    console.log(data);
                     const first10 = data.organizations.slice(0,10);
                     first10.forEach(function (org) {
 
-                        geocoder.geocode( {'address':org.address.postcode}, function(results, status) {
+                        geocoder.geocode( {'address':org.address.postcode}, 
+                        
+                        function(results, status) {
                             if (status == 'OK') {
                                 // console.log(results[0].geometry.location)
                                 map.setCenter(results[0].geometry.location);
@@ -47,11 +49,10 @@ distanceInputButton.addEventListener("click", function() {
                                 google.maps.event.addListener(marker, 'click', (function(marker) {
 
                                     return function() {
-                                        infoWindow.setContent(`
-                                            <h3>${org.name}</h3>
-                                            <img src=${org.photos[0].small}>
-                                            <p>Phone: ${org.phone}</p>
-                                            <p>Website: ${org.website}</p>`)
+                                        let contentString = createContentString(org.name,org.photos,org.phone,org.website);
+
+                                        infoWindow.setContent(contentString)
+
                                         infoWindow.open({
                                             map: map,
                                             anchor: marker,
@@ -104,10 +105,35 @@ function initGoogle() {
     }
 }
 
-// an info window is an object of the type infowindow
+function createContentString(name, photos, phone, website) {
 
- 
-// constructor of the info window takes an infowindowOptions object as argument
+    contentString = (photos.length===0) ? `<h3>${name}</h3>
+    <p>Phone: ${phone}</p>
+    <p>Website: ${website}</p>`:`
+    <h3>${name}</h3>
+    <img src=${photos[0].small}>
+    <p>Phone: ${phone}</p>
+    <p>Website: ${website}</p>`;
+
+    return(contentString)
+}
+
+
+// next steps: 
+
+// DONE 1: some of the return organizations their org.photos is Array(0). And the infoWindow won't render returning an error
+// Uncaught TypeError: Cannot read properties of undefined (reading 'small')
+
+// 2: page loads very slow; refactor into modules
+
+// 3: find a place to deploy (github pages probably won't work because of the api keys)
+
+// 4: change marker event handler to open up a popup that displays pictures of available cats; use pet finder api animal search using shelter id
+
+// 5: add save animal function next to each cat picture; add login and allow users to see saved animals; firebase realtime database,  
+
+// 6: what if user clicked no when asking if allowing to use their locations?
+
 
 
 
