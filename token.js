@@ -20,7 +20,7 @@ function refreshToken() {
     })
     .catch(error => console.error(error))
 
-    return access_token
+    return access_token;
 }
     
 let accessToken = refreshToken();
