@@ -1,4 +1,3 @@
-const accessToken = "ACCESS_TOKEN";
 const distanceInputButton = document.querySelector("#submitDistance");
 const distanceInput = document.querySelector("input.input");
 
