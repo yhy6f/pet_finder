@@ -32,7 +32,7 @@ Then you can pass in the location information in an object into the Geocoder.geo
     Geocoder.geocode(GeocoderRequest)
 
 ## Hiding the Google Maps API key
-To be able to use the API, you'd have to have credit card info on file, so you don't want to hard code it as a variable and push it to Github. 
+To be able to use the Google API, you'd have to have credit card info on file, so you don't want to hard code it as a variable and push it to Github. 
 
 I tried storing it in dotenv file but it was impossible to access it as a variable in the JavaScript code because the way the Google API works is you reference the key in the front end, in a script tag in the html file like this:
 
@@ -65,7 +65,7 @@ And because the token expire every hour, here's how to refresh it in curl:
 
     curl -d "grant_type=client_credentials&client_id={CLIENT-ID}&client_secret={CLIENT-SECRET}" https://api.petfinder.com/v2/oauth2/token
 
-To translate it in JavaScript, the -d is key. It means you're POSTing data instead of GETing, and the data is that long string. So you'd need to change the mothod to 'POST' in the fetch request, and pass in the body object as a string:
+To translate this curl request into JavaScript, the -d is the key. It means you're POSTing data instead of GETing, and the data is that long string before the url. So you'd need to change the mothod to 'POST' in the fetch request, and pass in the body object as a string, thus JSON.stringify(body), like this:
 
     const body = {
         "grant_type": "client_credentials",
