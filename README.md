@@ -17,7 +17,7 @@ Google Maps APIs are a little complicated and the documentations are not always 
 
 Okay here're a few things I learned:
 
-### Geocoding API vs Geocoding Class in Maps JavaScript API
+### Geocoding API vs Geocoding Class
 Yes, they are separate. The [Geocoding API](https://developers.google.com/maps/documentation/geocoding/start) deals with static known addresses and the [Geocoder class](https://developers.google.com/maps/documentation/javascript/geocoding) provided within the Maps JavaScript API geocode dynamically from user input. So in my case I need the latter.
 
 ### Accessing the Geocoding Class 
@@ -31,7 +31,7 @@ Then you can pass in the location information in an object into the Geocoder.geo
 
     Geocoder.geocode(GeocoderRequest)
 
-## About hiding the Google Maps API key
+## Hiding the Google Maps API key
 To be able to use the API, you'd have to have credit card info on file, so you don't want to hard code it as a variable and push it to Github. 
 
 I tried storing it in dotenv file but it was impossible to access it as a variable in the JavaScript code because the way the Google API works is you reference the key in the front end, in a script tag in the html file like this:
@@ -46,7 +46,7 @@ So an engineer friend suggested that I store the key in an environment.js file, 
     document.body.appendChild(myScriptTag);
 
 
-## Passing in access tokens for API calls and refreshing them
+## Using and refreshing access tokens for API calls
 The petfinder API requires you to pass in access tokens to make API calls. The example code is a curl request:
 
     curl -H "Authorization: Bearer {YOUR_ACCESS_TOKEN}" GET https://api.petfinder.com/v2/{CATEGORY}/{ACTION}?{parameter_1}={value_1}&{parameter_2}={value_2}
