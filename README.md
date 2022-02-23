@@ -9,7 +9,13 @@ Not deployed yet because of complications of the API key (will explain in the bo
 A few notes if you are interested, and for my future self:
 
 ## Google Maps API
-Google Maps APIs are a little complicated and the documentations are not always beginner-friendly. Here're a few things I learned:
+Google Maps APIs are a little complicated and the documentations are not always beginner-friendly. A lot of tutorials on Youtube are outdated. I recommend following tutorial series if you're also a beginner learning to use Google Maps API:
+
+[2-part series by Coding With Leif](https://www.youtube.com/watch?v=C6VxJoR3754)
+
+[4-part series by WittCode](https://www.youtube.com/watch?v=Ad7bS3g87ds&list=PLkqiWyX-_Lot4FvynFl9i0vY1PbS11mHR)
+
+Okay here're a few things I learned:
 
 ### Geocoding API vs Geocoding Class in Maps JavaScript API
 Yes, they are separate. The [Geocoding API](https://developers.google.com/maps/documentation/geocoding/start) deals with static known addresses and the [Geocoder class](https://developers.google.com/maps/documentation/javascript/geocoding) provided within the Maps JavaScript API geocode dynamically from user input. So in my case I need the latter.
@@ -24,7 +30,6 @@ If you're a beginner like me, it might not click immediately, so here's what it 
 Then you can pass in the location information in an object into the Geocoder.geocode() method like this:
 
     Geocoder.geocode(GeocoderRequest)
-
 
 ## About hiding the Google Maps API key
 To be able to use the API, you'd have to have credit card info on file, so you don't want to hard code it as a variable and push it to Github. 
@@ -41,5 +46,49 @@ So an engineer friend suggested that I store the key in an environment.js file, 
     document.body.appendChild(myScriptTag);
 
 
-## About refreshing the access token for calls
+## Passing in access tokens for API calls and refreshing them
+The petfinder API requires you to pass in access tokens to make API calls. The example code is a curl request:
+
+    curl -H "Authorization: Bearer {YOUR_ACCESS_TOKEN}" GET https://api.petfinder.com/v2/{CATEGORY}/{ACTION}?{parameter_1}={value_1}&{parameter_2}={value_2}
+
+Translated into JavaScript, you pass in the token in the headers object in your fetch request (which is followed by .then etc etc):
+
+    fetch(shelterEndpoint, {
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${accessToken}`,
+        },
+    }).then()...
+
+And because the token expire every hour, here's how to refresh it in curl:
+
+    curl -d "grant_type=client_credentials&client_id={CLIENT-ID}&client_secret={CLIENT-SECRET}" https://api.petfinder.com/v2/oauth2/token
+
+Translated into JavaScript:
+
+    const body = {
+        "grant_type": "client_credentials",
+        "client_id": YOUR_CLIENT_ID,
+        "client_secret": YOUR_CLIENT_SECRET
+    }
+
+    fetch('https://api.petfinder.com/v2/oauth2/token', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8'
+        }
+    })
+    .then(response => response.json())
+    .then(auth => {
+        // console.log(typeof(auth));
+        // console.log(auth.access_token);
+        return auth.access_token;
+    })
+    .catch(error => console.error(error))
+
+BUT, this will only return a promise! You can console log auth.access_token okay but can't return it. You'd have to return the entire fetch request, and then access the value in .then, like [this post](https://stackoverflow.com/questions/47604040/how-to-get-data-returned-from-fetch-promise) explains.
+
+
+
 
