@@ -64,7 +64,7 @@ And because the token expire every hour, here's how to refresh it in curl:
 
     curl -d "grant_type=client_credentials&client_id={CLIENT-ID}&client_secret={CLIENT-SECRET}" https://api.petfinder.com/v2/oauth2/token
 
-Translated into JavaScript:
+To translate it in JavaScript, the -d is key. It means you're POSTing data instead of GETing, and the data is that long string. So you'd need to change the mothod to 'POST' in the fetch request, and pass in the body object as a string:
 
     const body = {
         "grant_type": "client_credentials",
@@ -81,13 +81,54 @@ Translated into JavaScript:
     })
     .then(response => response.json())
     .then(auth => {
-        // console.log(typeof(auth));
         // console.log(auth.access_token);
         return auth.access_token;
     })
     .catch(error => console.error(error))
 
-BUT, this will only return a promise! You can console log auth.access_token okay but can't return it. You'd have to return the entire fetch request, and then access the value in .then, like [this post](https://stackoverflow.com/questions/47604040/how-to-get-data-returned-from-fetch-promise) explains.
+BUT, this will only return a promise! You can console log auth.access_token okay but can't return it, weird right? You'd have to return the entire fetch request, and then access the value in .then(), like [this post](https://stackoverflow.com/questions/47604040/how-to-get-data-returned-from-fetch-promise) explains.
+
+If you wrap it into a function it works like this:
+
+    async function refreshToken() {
+        const body = {
+            "grant_type": "client_credentials",
+            "client_id": YOUR_CLIENT_ID,
+            "client_secret": YOUR_CLIENT_SECRET
+        }
+        return fetch('https://api.petfinder.com/v2/oauth2/token', {
+            method: 'POST',
+            body: JSON.stringify(body),
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+            }
+        })
+        .then(response => response.json())
+        .then(auth => {
+            return auth.access_token;
+        })
+        .catch(error => console.error(error))
+
+    }
+
+    let accessToken;
+    refreshToken().then((token) => {
+        accessToken = token;
+    }) 
+
+## What's next
+
+### Deployment
+
+I'd love to have it deployed so that it can be tested by other people. I tried turning it into an express app and attempted deployment with Heroku, BUT even if I store the Google API key as an environment variable in Heroku setting, I can't access it in the front end. So if you have any ideas, let me know!
+
+### Other features
+
+Ideally I'd love for the popups of the markers to show information of available pets rather than just information of the shelters. 
+
+### Refactoring code
+
+Currently the map loads very slowly and my code is not the most efficient and modular-ized. I'd love to refactor it into an React app.
 
 
 
