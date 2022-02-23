@@ -45,6 +45,7 @@ So an engineer friend suggested that I store the key in an environment.js file, 
     myScriptTag.setAttribute("async", "");
     document.body.appendChild(myScriptTag);
 
+And remember to gitignore the environment.js, of course.
 
 ## Using and refreshing access tokens for API calls
 The petfinder API requires you to pass in access tokens to make API calls. The example code is a curl request:
